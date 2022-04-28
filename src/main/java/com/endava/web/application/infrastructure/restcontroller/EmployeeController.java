@@ -3,23 +3,22 @@ package com.endava.web.application.infrastructure.restcontroller;
 import com.endava.web.application.domain.model.Employee;
 import com.endava.web.application.domain.service.EmployeeService;
 import com.endava.web.application.infrastructure.restcontroller.dto.EmployeeDto;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class EmployeeController {
 
     private final EmployeeService employeeService;
-    private final Converter<EmployeeDto, com.endava.web.application.domain.model.Employee> employeeDtoEmployeeConverter;
-    private final Converter<com.endava.web.application.domain.model.Employee, EmployeeDto> employeeEmployeeDtoConverter;
+    private final Converter<EmployeeDto, Employee> employeeDtoEmployeeConverter;
+    private final Converter<Employee, EmployeeDto> employeeEmployeeDtoConverter;
 
     @GetMapping("employees")
     public List<Employee> showAllEmployees() {
@@ -32,16 +31,16 @@ public class EmployeeController {
     }
 
     @PostMapping("employees")
-    public ResponseEntity<EmployeeDto> addNewEmployee(@Validated @RequestBody EmployeeDto employeeDto) {
-        return new ResponseEntity<>(employeeEmployeeDtoConverter.convert(
-                employeeService.saveEmployee(employeeDtoEmployeeConverter.convert(employeeDto)))
-                , HttpStatus.OK);
+    public ResponseEntity<EmployeeDto> addNewEmployee(@RequestBody EmployeeDto employeeDto) {
+        Employee employee = employeeDtoEmployeeConverter.convert(employeeDto);
+        EmployeeDto employeeDtoToReturn = employeeEmployeeDtoConverter.convert(employeeService.saveEmployee(employee));
+        return new ResponseEntity<>(employeeDtoToReturn, HttpStatus.OK);
     }
 
     @PutMapping("employees/{id}")
-    public ResponseEntity<EmployeeDto> updateEmployee(@Validated @RequestBody EmployeeDto employeeDto) {
-        return new ResponseEntity<>(employeeEmployeeDtoConverter.convert(
-                employeeService.updateEmployee(employeeDtoEmployeeConverter.convert(employeeDto)))
-                , HttpStatus.OK);
+    public ResponseEntity<EmployeeDto> updateEmployee(@RequestBody EmployeeDto employeeDto, @PathVariable Integer id) {
+        Employee employee = employeeDtoEmployeeConverter.convert(employeeDto);
+        EmployeeDto employeeDtoToReturn = employeeEmployeeDtoConverter.convert(employeeService.updateEmployee(employee, id));
+        return new ResponseEntity<>(employeeDtoToReturn, HttpStatus.OK);
     }
 }

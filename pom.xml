@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.endava</groupId>
-    <artifactId>web_application</artifactId>
+    <artifactId>web-application</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>web_application</name>
+    <name>web-application</name>
     <description>Web Application Practice</description>
     <properties>
         <java.version>11</java.version>

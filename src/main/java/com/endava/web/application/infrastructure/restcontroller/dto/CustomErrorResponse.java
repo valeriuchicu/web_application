@@ -1,4 +1,4 @@
-package com.endava.web.application.domain.exception;
+package com.endava.web.application.infrastructure.restcontroller.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;

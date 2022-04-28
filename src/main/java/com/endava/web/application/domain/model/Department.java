@@ -3,12 +3,10 @@ package com.endava.web.application.domain.model;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
-@Entity(name = "departments")
+@Entity
+@Table(name = "departments")
 @Data
 @NoArgsConstructor
 public class Department {

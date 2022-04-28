@@ -5,10 +5,12 @@ import com.endava.web.application.domain.exception.exceptions.DepartmentAlreadyE
 import com.endava.web.application.domain.exception.exceptions.DepartmentConstraintsException;
 import com.endava.web.application.domain.exception.exceptions.NoSuchDepartmentException;
 import com.endava.web.application.domain.model.Department;
+import io.micrometer.core.instrument.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -23,7 +25,7 @@ public class DepartmentService {
 
     public Department getDepartment(int departmentId) {
         Optional<Department> department = repository.findById(departmentId);
-        return department.orElseThrow(()-> new NoSuchDepartmentException(
+        return department.orElseThrow(() -> new NoSuchDepartmentException(
                 "DEPARTMENT WITH ID " + departmentId + " DOES NOT EXISTS"));
     }
 
@@ -33,24 +35,38 @@ public class DepartmentService {
         return repository.save(department);
     }
 
-    public Department updateDepartment(Department department) {
+    public Department updateDepartment(Department department, Integer id) {
         checkDepartmentConstraints(department);
-        checkIfDepartmentWithSuchNameExists(department);
-        return repository.save(department);
+
+        Department departmentFromDB = repository.getById(id);
+        if (!Objects.equals(department.getName(), departmentFromDB.getName())) {
+            verifyName(department);
+            departmentFromDB.setName(department.getName());
+        }
+        departmentFromDB.setLocation(department.getLocation());
+
+        return repository.save(departmentFromDB);
     }
 
-    private void checkIfDepartmentWithSuchNameExists(Department department){
+    private void checkIfDepartmentWithSuchNameExists(Department department) {
         repository.findByName(department.getName()).ifPresent(department1 -> {
             throw new DepartmentAlreadyExistsException("DEPARTMENT WITH THIS NAME ALREADY EXISTS");
         });
     }
 
-    private void checkDepartmentConstraints(Department department){
+    private void checkDepartmentConstraints(Department department) {
         if (department.getName() == null || department.getName().isEmpty() || department.getName().trim().isEmpty()) {
             throw new DepartmentConstraintsException("DEPARTMENT NAME CANNOT BE NULL, EMPTY OR BLANK");
         }
-        if (department.getLocation() == null || department.getLocation().isEmpty() || department.getLocation().trim().isEmpty()) {
+        if (StringUtils.isBlank(department.getLocation())) {
+
             throw new DepartmentConstraintsException("DEPARTMENT LOCATION CANNOT BE NULL, EMPTY OR BLANK");
+        }
+    }
+
+    protected void verifyName(Department department) {
+        if (repository.existsByName(department.getName())) {
+            throw new DepartmentConstraintsException("DEPARTMENT WITH EMAIL " + department.getName() + " ALREADY EXISTS");
         }
     }
 }

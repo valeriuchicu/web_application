@@ -6,9 +6,9 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 @Component
-public class EmployeeDtoToEmployee implements Converter<EmployeeDto, com.endava.web.application.domain.model.Employee> {
+public class EmployeeDtoToEmployee implements Converter<EmployeeDto, Employee> {
     @Override
-    public com.endava.web.application.domain.model.Employee convert(EmployeeDto employeeDto) {
+    public Employee convert(EmployeeDto employeeDto) {
         return Employee.builder()
                 .firstName(employeeDto.getFirstName())
                 .lastName(employeeDto.getLastName())

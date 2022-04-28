@@ -3,18 +3,17 @@ package com.endava.web.application.infrastructure.restcontroller;
 import com.endava.web.application.domain.model.Department;
 import com.endava.web.application.domain.service.DepartmentService;
 import com.endava.web.application.infrastructure.restcontroller.dto.DepartmentDto;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DepartmentController {
 
     private final Converter<DepartmentDto, Department> departmentDtoToDepartmentConverter;
@@ -33,7 +32,7 @@ public class DepartmentController {
     }
 
     @PostMapping("/departments")
-    public ResponseEntity<DepartmentDto> addNewDepartment(@Validated @RequestBody DepartmentDto departmentDto) {
+    public ResponseEntity<DepartmentDto> addNewDepartment(@RequestBody DepartmentDto departmentDto) {
         final Department department = departmentDtoToDepartmentConverter.convert(departmentDto);
         final Department savedDepartment = departmentService.saveDepartment(department);
 
@@ -41,7 +40,7 @@ public class DepartmentController {
     }
 
     @PutMapping("/departments/{id}")
-    public ResponseEntity<Department> updateDepartment(@RequestBody Department department) {
-        return new ResponseEntity<>(departmentService.updateDepartment(department), HttpStatus.OK);
+    public ResponseEntity<Department> updateDepartment(@RequestBody Department department, @PathVariable int id) {
+        return new ResponseEntity<>(departmentService.updateDepartment(department, id), HttpStatus.OK);
     }
 }

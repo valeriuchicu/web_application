@@ -1,7 +1,7 @@
 package com.endava.web.application.domain.service;
 
-import com.endava.web.application.domain.dao.DepartmentRepository;
-import com.endava.web.application.domain.dao.EmployeeRepository;
+import com.endava.web.application.domain.service.dao.DepartmentRepository;
+import com.endava.web.application.domain.service.dao.EmployeeRepository;
 import com.endava.web.application.domain.exception.exceptions.*;
 import com.endava.web.application.domain.model.Employee;
 import io.micrometer.core.instrument.util.StringUtils;

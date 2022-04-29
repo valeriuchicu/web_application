@@ -1,4 +1,4 @@
-package com.endava.web.application.domain.dao;
+package com.endava.web.application.domain.service.dao;
 
 import com.endava.web.application.domain.model.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;

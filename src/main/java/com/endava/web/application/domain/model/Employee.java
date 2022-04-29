@@ -8,7 +8,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
 
-@Entity
+@Entity(name = "Employee")
 @Table(name="employees")
 @Data
 @Builder
@@ -17,7 +17,7 @@ import javax.persistence.*;
 public class Employee {
 
     @Id
-    @Column(name = "employee_id")
+    @Column(name = "employee_id", updatable = false)
     @GeneratedValue(generator = "employees_seq")
     private Integer id;
 

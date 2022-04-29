@@ -2,17 +2,16 @@ package com.endava.web.application.domain.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 
-@Entity
+@Entity(name = "Department")
 @Table(name = "departments")
 @Data
 @NoArgsConstructor
 public class Department {
 
     @Id
-    @Column(name = "id")
+    @Column(name = "id", updatable = false)
     @GeneratedValue(generator = "departments_seq")
     private Integer id;
 

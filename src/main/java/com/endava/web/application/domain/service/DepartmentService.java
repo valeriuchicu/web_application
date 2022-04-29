@@ -1,6 +1,6 @@
 package com.endava.web.application.domain.service;
 
-import com.endava.web.application.domain.dao.DepartmentRepository;
+import com.endava.web.application.domain.service.dao.DepartmentRepository;
 import com.endava.web.application.domain.exception.exceptions.DepartmentAlreadyExistsException;
 import com.endava.web.application.domain.exception.exceptions.DepartmentConstraintsException;
 import com.endava.web.application.domain.exception.exceptions.NoSuchDepartmentException;
@@ -55,18 +55,17 @@ public class DepartmentService {
     }
 
     private void checkDepartmentConstraints(Department department) {
-        if (department.getName() == null || department.getName().isEmpty() || department.getName().trim().isEmpty()) {
+        if (StringUtils.isBlank(department.getName())) {
             throw new DepartmentConstraintsException("DEPARTMENT NAME CANNOT BE NULL, EMPTY OR BLANK");
         }
         if (StringUtils.isBlank(department.getLocation())) {
-
             throw new DepartmentConstraintsException("DEPARTMENT LOCATION CANNOT BE NULL, EMPTY OR BLANK");
         }
     }
 
     protected void verifyName(Department department) {
         if (repository.existsByName(department.getName())) {
-            throw new DepartmentConstraintsException("DEPARTMENT WITH EMAIL " + department.getName() + " ALREADY EXISTS");
+            throw new DepartmentConstraintsException("DEPARTMENT WITH NAME " + department.getName() + " ALREADY EXISTS");
         }
     }
 }

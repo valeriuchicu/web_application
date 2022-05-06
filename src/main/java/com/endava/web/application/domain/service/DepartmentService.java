@@ -1,10 +1,10 @@
 package com.endava.web.application.domain.service;
 
-import com.endava.web.application.domain.service.dao.DepartmentRepository;
 import com.endava.web.application.domain.exception.exceptions.DepartmentAlreadyExistsException;
 import com.endava.web.application.domain.exception.exceptions.DepartmentConstraintsException;
 import com.endava.web.application.domain.exception.exceptions.NoSuchDepartmentException;
 import com.endava.web.application.domain.model.Department;
+import com.endava.web.application.domain.service.dao.DepartmentRepository;
 import io.micrometer.core.instrument.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ public class DepartmentService {
         return repository.findAll();
     }
 
-    public Department getDepartment(int departmentId) {
+    public Department getDepartmentById(int departmentId) {
         Optional<Department> department = repository.findById(departmentId);
         return department.orElseThrow(() -> new NoSuchDepartmentException(
                 "DEPARTMENT WITH ID " + departmentId + " DOES NOT EXISTS"));
@@ -49,9 +49,9 @@ public class DepartmentService {
     }
 
     private void checkIfDepartmentWithSuchNameExists(Department department) {
-        repository.findByName(department.getName()).ifPresent(department1 -> {
+        if(repository.existsByName(department.getName())){
             throw new DepartmentAlreadyExistsException("DEPARTMENT WITH THIS NAME ALREADY EXISTS");
-        });
+        }
     }
 
     private void checkDepartmentConstraints(Department department) {
@@ -63,7 +63,7 @@ public class DepartmentService {
         }
     }
 
-    protected void verifyName(Department department) {
+    private void verifyName(Department department) {
         if (repository.existsByName(department.getName())) {
             throw new DepartmentConstraintsException("DEPARTMENT WITH NAME " + department.getName() + " ALREADY EXISTS");
         }

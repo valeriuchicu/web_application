@@ -1,13 +1,26 @@
 package com.endava.web.application.domain.model;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import javax.persistence.*;
+import lombok.Setter;
 
-@Entity(name = "Department")
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
 @Table(name = "departments")
-@Data
+@Getter
+@Setter
+@Builder
+@EqualsAndHashCode
 @NoArgsConstructor
+@AllArgsConstructor
 public class Department {
 
     @Id

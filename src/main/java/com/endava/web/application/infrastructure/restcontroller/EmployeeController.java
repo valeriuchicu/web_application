@@ -27,12 +27,12 @@ public class EmployeeController {
 
     @GetMapping("employees/{id}")
     public EmployeeDto getEmployee(@PathVariable int id) {
-        return employeeEmployeeDtoConverter.convert(employeeService.getEmployee(id));
+        return employeeEmployeeDtoConverter.convert(employeeService.getEmployeeById(id));
     }
 
     @PostMapping("employees")
     public ResponseEntity<EmployeeDto> addNewEmployee(@RequestBody EmployeeDto employeeDto) {
-        Employee employee = employeeDtoEmployeeConverter.convert(employeeDto);
+        final Employee employee = employeeDtoEmployeeConverter.convert(employeeDto);
         EmployeeDto employeeDtoToReturn = employeeEmployeeDtoConverter.convert(employeeService.saveEmployee(employee));
         return new ResponseEntity<>(employeeDtoToReturn, HttpStatus.OK);
     }

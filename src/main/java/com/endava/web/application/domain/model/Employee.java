@@ -2,18 +2,28 @@ package com.endava.web.application.domain.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import javax.persistence.*;
+import lombok.Setter;
 
-@Entity(name = "Employee")
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+@Entity
 @Table(name="employees")
-@Data
+@Getter
+@Setter
 @Builder
-@AllArgsConstructor
+@EqualsAndHashCode
 @NoArgsConstructor
+@AllArgsConstructor
 public class Employee {
 
     @Id
@@ -27,8 +37,7 @@ public class Employee {
     @Column(name="last_name")
     private String lastName;
 
-    @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "department_id")
     private Department department;
 

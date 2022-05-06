@@ -13,4 +13,4 @@ mvnw.cmd
 mvnw
 web_application.iml
 target
-/src/test/
+#/src/test/

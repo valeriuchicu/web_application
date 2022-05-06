@@ -1,9 +1,11 @@
 package com.endava.web.application.domain.service;
 
-import com.endava.web.application.domain.service.dao.DepartmentRepository;
-import com.endava.web.application.domain.service.dao.EmployeeRepository;
-import com.endava.web.application.domain.exception.exceptions.*;
+import com.endava.web.application.domain.exception.exceptions.DepartmentDoesNotExistsException;
+import com.endava.web.application.domain.exception.exceptions.EmployeeConstraintsException;
+import com.endava.web.application.domain.exception.exceptions.NoSuchDepartmentException;
+import com.endava.web.application.domain.exception.exceptions.NoSuchEmployeeException;
 import com.endava.web.application.domain.model.Employee;
+import com.endava.web.application.domain.service.dao.EmployeeRepository;
 import io.micrometer.core.instrument.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,13 +19,12 @@ import java.util.Optional;
 public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
-    private final DepartmentRepository repositoryDepartment;
 
     public List<Employee> getAllEmployees() {
         return employeeRepository.findAll();
     }
 
-    public Employee getEmployee(int employeeId) {
+    public Employee getEmployeeById(int employeeId) {
         Optional<Employee> employee = employeeRepository.findById(employeeId);
         return employee.orElseThrow(() -> new NoSuchEmployeeException(
                 "EMPLOYEE WITH ID " + employeeId + " DOES NOT EXISTS"));
@@ -33,14 +34,14 @@ public class EmployeeService {
         ifEmailAndPhoneExists(employee);
         validateEmployeeNameConstraints(employee);
         if (employee.getDepartment() != null
-                && ! repositoryDepartment.findById(employee.getDepartment().getId()).isPresent() ) {
+                && employee.getDepartment().getId() == null ) {
             throw new NoSuchDepartmentException("DEPARTMENT WITH ID " + employee.getDepartment().getId() + " DOES NOT EXISTS");
         }
         return employeeRepository.save(employee);
     }
 
     public Employee updateEmployee(Employee employee, Integer id) {
-        if (!repositoryDepartment.existsById(employee.getDepartment().getId())) {
+        if (Objects.nonNull(employee.getDepartment()) && employee.getDepartment().getId() == null) {
             throw new DepartmentDoesNotExistsException("DEPARTMENT WITH THIS ID DOES NOT EXISTS");
         }
         validateEmployeeNameConstraints(employee);
@@ -57,25 +58,26 @@ public class EmployeeService {
         employeeFromDB.setFirstName(employee.getFirstName());
         employeeFromDB.setLastName(employee.getLastName());
         employeeFromDB.setSalary(employee.getSalary());
+        employeeFromDB.setDepartment(employee.getDepartment());
 
         return employeeRepository.save(employeeFromDB);
     }
 
     private void validateEmployeeNameConstraints(Employee employee) {
         if (StringUtils.isBlank(employee.getFirstName())) {
-            throw new DepartmentConstraintsException("EMPLOYEE FIRST NAME CANNOT BE NULL, EMPTY OR BLANK");
+            throw new EmployeeConstraintsException("EMPLOYEE FIRST NAME CANNOT BE NULL, EMPTY OR BLANK");
         }
         if (StringUtils.isBlank(employee.getLastName())) {
-            throw new DepartmentConstraintsException("EMPLOYEE LAST NAME CANNOT BE NULL, EMPTY OR BLANK");
+            throw new EmployeeConstraintsException("EMPLOYEE LAST NAME CANNOT BE NULL, EMPTY OR BLANK");
         }
         if (StringUtils.isBlank(employee.getEmail())) {
-            throw new DepartmentConstraintsException("EMPLOYEE EMAIL CANNOT BE NULL, EMPTY OR BLANK");
+            throw new EmployeeConstraintsException("EMPLOYEE EMAIL CANNOT BE NULL, EMPTY OR BLANK");
         }
         if (StringUtils.isBlank(employee.getPhoneNumber())) {
-            throw new DepartmentConstraintsException("EMPLOYEE PHONE NUMBER CANNOT BE NULL, EMPTY OR BLANK");
+            throw new EmployeeConstraintsException("EMPLOYEE PHONE NUMBER CANNOT BE NULL, EMPTY OR BLANK");
         }
         if (employee.getSalary() < 1.00) {
-            throw new DepartmentConstraintsException("EMPLOYEE SALARY MUST BE >= 1.0");
+            throw new EmployeeConstraintsException("EMPLOYEE SALARY MUST BE >= 1.0");
         }
     }
 
@@ -101,7 +103,7 @@ public class EmployeeService {
 
     protected void verifyPhoneNumber(Employee employee) {
         if (employeeRepository.existsByPhoneNumber(employee.getPhoneNumber())) {
-            throw new EmployeeConstraintsException("EMPLOYEE WITH EMAIL " + employee.getPhoneNumber() + " ALREADY EXISTS");
+            throw new EmployeeConstraintsException("EMPLOYEE WITH PHONE NUMBER " + employee.getPhoneNumber() + " ALREADY EXISTS");
         }
     }
 }
